@@ -13,32 +13,40 @@ import { Feather } from '@expo/vector-icons'
 import wateringImg from '../assets/watering.png';
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
+import { useNavigation } from '@react-navigation/core';
 
 export function Welcome() {
+  const navigation = useNavigation();
+
+  function handleStart() {
+    navigation.navigate('UserIdentification')
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.wrapper}>
-      <Text style={styles.title}>
-        Gerencie {'\n'}
+        <Text style={styles.title}>
+          Gerencie {'\n'}
         suas plantas de {'\n'}
         forma fácil
         </Text>
 
-      <Image resizeMode="contain" style={styles.image} source={wateringImg}/>
+        <Image resizeMode="contain" style={styles.image} source={wateringImg} />
 
-      <Text style={styles.subtitle}>
-        Não esqueça mais de regar suas plantas.
-        Nos cuidamos de lembrar vocês sempre que precisar.
+        <Text style={styles.subtitle}>
+          Não esqueça mais de regar suas plantas.
+          Nos cuidamos de lembrar vocês sempre que precisar.
       </Text>
 
-      <TouchableOpacity
-        style={styles.button}
-        activeOpacity={0.8}
-      >
-        <Text style={styles.buttonText}>
-          <Feather name="chevron-right" size={24} color={colors.white} />
-        </Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          activeOpacity={0.8}
+          onPress={handleStart}
+        >
+          <Text style={styles.buttonText}>
+            <Feather name="chevron-right" size={24} color={colors.white} />
+          </Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -83,5 +91,5 @@ const styles = StyleSheet.create({
   buttonText: {
     color: colors.white,
     fontSize: 24,
-  }  
+  }
 })
