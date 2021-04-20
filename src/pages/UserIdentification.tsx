@@ -55,8 +55,8 @@ export function UserIdentification() {
               </Text>
               <Text style={styles.title}>
                 Como podemos {'\n'}
-            chamar você
-          </Text>
+                chamar você?
+              </Text>
               <TextInput
                 placeholder="Digite seu nome"
                 onBlur={handleInputBlur}
