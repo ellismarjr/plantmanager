@@ -1,5 +1,6 @@
-import { useNavigation } from '@react-navigation/core';
 import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/core';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   SafeAreaView,
   StyleSheet,
@@ -9,7 +10,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
-  Keyboard
+  Keyboard,
+  Alert,
+  ToastAndroid
 } from 'react-native';
 import { Button } from '../components/Button';
 
@@ -37,8 +40,24 @@ export function UserIdentification() {
     setName(value);
   }
 
-  function handleSubmit() {
-    navigation.navigate('Confirmation')
+  async function handleSubmit() {
+    if (!name) {
+      return Alert.alert('Me diz como chamar você 😥');
+    }
+
+    await AsyncStorage.setItem('@plantmanager:user', name);
+    ToastAndroid.showWithGravity(
+      `Seja bem vindo ${name}`,
+      ToastAndroid.LONG,
+      ToastAndroid.CENTER)
+
+    navigation.navigate('Confirmation', {
+      title: 'Prontinho',
+      subtitle: 'Agora vamos começar a cuidar das suas plantinhas com muito cuidade!',
+      buttonTitle: 'Começar',
+      icon: 'smile',
+      nextScreen: 'PlantSelect'
+    });
   }
 
   return (

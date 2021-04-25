@@ -10,6 +10,7 @@ import api from '../services/api';
 
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
+import { useNavigation } from '@react-navigation/core';
 
 interface IEnviroment {
   key: string;
@@ -38,7 +39,8 @@ export function PlantSelect() {
 
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [loadedAll, setLoadedAll] = useState(false)
+
+  const navigation = useNavigation();
 
   function handleEnviromentSeletect(enviroment: string) {
     setEnviromentSeletect(enviroment);
@@ -54,16 +56,14 @@ export function PlantSelect() {
   }
 
   async function loadPlants() {
-    const response = await api.get(`plants?_sort=name&order=asc&_page=${page}&_limit=8`);
+    const response = await api.get(`plants?_sort=name&_order=asc&_page=${page}&_limit=8`);
 
-    if (response.data.length === 0) {
-      setLoadingMore(false);
-      return;
-    }
+    if (!response.data)
+      return setLoading(true);
 
     if (page > 1) {
-      setPlants(prevArray => [...prevArray, response.data]);
-      setFilteredPlants(prevArray => [...prevArray, response.data]);
+      setPlants(oldValue => [...oldValue, ...response.data])
+      setFilteredPlants(oldValue => [...oldValue, ...response.data])
     } else {
       setPlants(response.data);
       setFilteredPlants(response.data);
@@ -73,6 +73,8 @@ export function PlantSelect() {
     setLoadingMore(false);
   }
 
+
+
   async function handleLoadMore(distance: number) {
     if (distance < 1) {
       return;
@@ -81,6 +83,10 @@ export function PlantSelect() {
     setLoadingMore(true);
     setPage(oldValue => oldValue + 1);
     loadPlants();
+  }
+
+  function handlePlantSelect(plant: IPlants) {
+    navigation.navigate('PlantSave', { plant })
   }
 
   useEffect(() => {
@@ -121,6 +127,7 @@ export function PlantSelect() {
       <View>
         <FlatList
           data={enviroments}
+          keyExtractor={(item) => String(item.key)}
           renderItem={({ item }) => <EnviromentButton
             active={item.key === enviromentSeletect}
             onPress={() => handleEnviromentSeletect(item.key)}
@@ -134,8 +141,13 @@ export function PlantSelect() {
       <View style={styles.plants}>
         <FlatList
           data={filteredPlants}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <PlantCardPrimary data={item} />}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={({ item }) => (
+            <PlantCardPrimary
+              onPress={() => handlePlantSelect(item)}
+              data={item}
+            />
+          )}
           showsVerticalScrollIndicator={false}
           numColumns={2}
           onEndReachedThreshold={0.1}
